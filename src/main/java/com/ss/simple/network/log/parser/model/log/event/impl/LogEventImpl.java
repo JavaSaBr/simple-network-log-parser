@@ -1,25 +1,26 @@
 package com.ss.simple.network.log.parser.model.log.event.impl;
 
-import static com.ss.rlib.util.ObjectUtils.notNull;
 import com.ss.rlib.util.ArrayUtils;
+import com.ss.rlib.util.StringUtils;
 import com.ss.simple.network.log.parser.model.log.event.LogEvent;
 import com.ss.simple.network.log.parser.model.log.event.LogEventHeader;
 import com.ss.simple.network.log.parser.model.log.event.MutableLogEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * @author JavaSaBr
  */
 public class LogEventImpl implements MutableLogEvent {
 
-    @Nullable
+    @NotNull
     private LogEventHeader header;
 
-    @Nullable
+    @NotNull
     private String[] values;
 
     public LogEventImpl() {
+        this.header = LogEventHeader.EMPTY;
+        this.values = StringUtils.EMPTY_ARRAY;
     }
 
     private LogEventImpl(@NotNull final LogEventHeader header, @NotNull final String[] values) {
@@ -28,12 +29,12 @@ public class LogEventImpl implements MutableLogEvent {
     }
 
     private @NotNull String[] values() {
-        return notNull(values, "Values isn't set.");
+        return values;
     }
 
     @Override
     public @NotNull LogEventHeader header() {
-        return notNull(header, "Header isn't set.");
+        return header;
     }
 
     @Override
@@ -43,7 +44,7 @@ public class LogEventImpl implements MutableLogEvent {
 
     @Override
     public @NotNull String value(final int index) {
-        return values()[index];
+        return values[index];
     }
 
     @Override
@@ -55,9 +56,27 @@ public class LogEventImpl implements MutableLogEvent {
     public void setValues(@NotNull final String[] values) {
 
         if (ArrayUtils.find(values, String::isEmpty) != null) {
-            throw new IllegalArgumentException("The values contains a null element.");
+            throw new IllegalArgumentException("The values shouldn't contain an empty element.");
         }
 
         this.values = values;
+    }
+
+    @Override
+    public String toString() {
+
+        final StringBuilder builder = new StringBuilder("LogEvent:\n");
+
+        for (int i = 0; i < values.length; i++) {
+
+            final String value = values[i];
+            final String field = header.field(i);
+
+            builder.append('\t').append(field)
+                    .append(':').append(value)
+                    .append('\n');
+        }
+
+        return builder.toString();
     }
 }

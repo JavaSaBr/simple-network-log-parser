@@ -7,9 +7,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface LogEventHeader {
 
-    @NotNull String field(int index);
+    @NotNull LogEventHeader EMPTY = new LogEventHeader() {};
 
-    int fieldIndexOf(@NotNull String fieldName);
+    default @NotNull String field(int index) {
+        throw new UnsupportedOperationException();
+    }
 
-    int fieldCount();
+    default int fieldIndexOf(@NotNull String fieldName) {
+        return -1;
+    }
+
+    default int fieldCount() {
+        return 0;
+    }
 }

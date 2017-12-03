@@ -91,7 +91,8 @@ public class ConsoleController implements Controller {
                     }
 
                 } else if (option == 2) {
-                    //TODO
+                    statisticsService.handleHostCounts((host, count) ->
+                            System.out.println("Host: " + host + ", Count: " + count));
                 }
             }
         }

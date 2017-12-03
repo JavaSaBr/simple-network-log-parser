@@ -4,6 +4,8 @@ import static com.ss.rlib.util.ObjectUtils.notNull;
 import static com.ss.rlib.util.ref.ReferenceFactory.newRef;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import com.ss.rlib.logging.Logger;
+import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.util.ClassUtils;
 import com.ss.rlib.util.ref.Reference;
 import com.ss.rlib.util.ref.ReferenceType;
@@ -25,6 +27,9 @@ import java.util.TreeMap;
  * @author JavaSaBr
  */
 public class ParserServiceImpl implements ParserService {
+
+    @NotNull
+    private static final Logger LOGGER = LoggerManager.getLogger(ParserServiceImpl.class);
 
     @NotNull
     private final List<Parser> parsers;
@@ -73,9 +78,10 @@ public class ParserServiceImpl implements ParserService {
         final Map<String, Reference> counters = new TreeMap<>();
 
         parser.parse(in, (header, event) -> {
+            LOGGER.debug(event, Object::toString);
 
             if (ref.getInt() == -1) {
-                ref.setInt(header.fieldIndexOf("host"));
+                ref.setInt(header.fieldIndexOf("cs-host"));
             }
 
             final String value = event.value(ref.getInt());

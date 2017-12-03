@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
 
 /**
  * @author JavaSaBr
@@ -41,6 +42,19 @@ public class HostCounterStatistics {
             }
         } finally {
             lock.syncUnlock();
+        }
+    }
+
+    public void handleHostCounts(@NotNull BiConsumer<String, Long> consumer) {
+        lock.asyncLock();
+        try {
+            for (final Map.Entry<String, Reference> entry : counters.entrySet()) {
+                final String host = entry.getKey();
+                final Reference counter = entry.getValue();
+                consumer.accept(host, counter.getLong());
+            }
+        } finally {
+            lock.asyncUnlock();
         }
     }
 }
