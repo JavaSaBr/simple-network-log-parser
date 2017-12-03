@@ -12,6 +12,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author JavaSaBr
+ */
 public class ParserServiceTests {
 
     @BeforeAll
