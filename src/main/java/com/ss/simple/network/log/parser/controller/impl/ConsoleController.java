@@ -1,13 +1,19 @@
 package com.ss.simple.network.log.parser.controller.impl;
 
+import static java.util.stream.Collectors.joining;
 import com.ss.rlib.logging.Logger;
 import com.ss.rlib.logging.LoggerManager;
 import com.ss.rlib.util.ArrayUtils;
 import com.ss.rlib.util.StringUtils;
 import com.ss.rlib.util.array.ArrayFactory;
 import com.ss.simple.network.log.parser.controller.Controller;
+import com.ss.simple.network.log.parser.manager.ServiceManager;
+import com.ss.simple.network.log.parser.service.StatisticsService;
+import com.ss.simple.network.log.parser.service.parser.ParserService;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
@@ -29,16 +35,29 @@ public class ConsoleController implements Controller {
     private static final int[] AVAILABLE_FIRST_OPTIONS = ArrayFactory.toIntegerArray(1, 2);
 
     @NotNull
+    private final ParserService parserService;
+
+    @NotNull
+    private final StatisticsService statisticsService;
+
+    @NotNull
     private final Thread thread;
 
     @NotNull
     private final Set<String> availableFormats;
 
+    @NotNull
+    private final String formatsString;
+
     public ConsoleController() {
         this.thread = new Thread(this::runInThread);
         this.thread.setName(getClass().getSimpleName());
-        this.availableFormats = new HashSet<>();
-        this.availableFormats.add("csv");
+        final ServiceManager serviceManager = ServiceManager.getInstance();
+        this.parserService = serviceManager.getService(ParserService.class);
+        this.statisticsService = serviceManager.getService(StatisticsService.class);
+        this.availableFormats = new HashSet<>(parserService.getAvailableFormats());
+        this.formatsString = parserService.getAvailableFormats().stream()
+                .collect(joining(","));
     }
 
     private void runInThread() {
@@ -59,40 +78,67 @@ public class ConsoleController implements Controller {
 
                     System.out.print("Path to the file:");
 
-                    Path file;
-                    do {
+                    final Path file = readFile(scanner);
 
-                        final String inputPath = nextLineUntil(scanner, line -> !StringUtils.isEmpty(line));
+                    System.out.print("Format[" + formatsString + "]:");
 
-                        // /home/javasabr/Загрузки/log_example.log
-                        LOGGER.debug(inputPath, val -> "input path: " + val);
+                    final String format = readFormat(scanner);
 
-                        final Path path;
-                        try {
-                            path = Paths.get(inputPath);
-                        } catch (final InvalidPathException e) {
-                            System.out.print("You have input an incorrect path, try again:");
-                            continue;
-                        }
+                    try (final InputStream in = Files.newInputStream(file)) {
+                        parserService.parse(in, format);
+                    } catch (final IOException e) {
+                        LOGGER.error(e);
+                    }
 
-                        if (!Files.exists(path)) {
-                            System.out.print("Not found the file, try again:");
-                            continue;
-                        }
-
-                        file = path;
-                        break;
-
-                    } while (true);
-
-                    System.out.print("Format[csv]:");
-
-                    final String inputFormat = scanner.next();
-
-                    LOGGER.debug(inputFormat, val -> "input format: " + val);
+                } else if (option == 2) {
+                    //TODO
                 }
             }
         }
+    }
+
+    private @NotNull String readFormat(@NotNull final Scanner scanner) {
+        do {
+
+            final String inputFormat = scanner.next()
+                    .trim().toUpperCase();
+
+            LOGGER.debug(inputFormat, val -> "input format: " + val);
+
+            if (!availableFormats.contains(inputFormat)) {
+                System.out.print("Incorrect format, try again:");
+                continue;
+            }
+
+            return inputFormat;
+
+        } while (true);
+    }
+
+    private @NotNull Path readFile(@NotNull final Scanner scanner) {
+        Path file;
+        do {
+
+            final String inputPath = nextLineUntil(scanner, line -> !StringUtils.isEmpty(line));
+
+            // /home/javasabr/Загрузки/log_example.log
+            LOGGER.debug(inputPath, val -> "input path: " + val);
+
+            try {
+                file = Paths.get(inputPath);
+            } catch (final InvalidPathException e) {
+                System.out.print("Incorrect path, try again:");
+                continue;
+            }
+
+            if (!Files.exists(file)) {
+                System.out.print("Not found the file, try again:");
+                continue;
+            }
+
+            return file;
+
+        } while (true);
     }
 
     private int readOption(@NotNull final Scanner scanner) {
@@ -105,12 +151,12 @@ public class ConsoleController implements Controller {
             try {
                 option = Integer.parseInt(readValue);
             } catch (final NumberFormatException e) {
-                System.out.print("You have input an incorrect option, try again:");
+                System.out.print("Incorrect option, try again:");
                 continue;
             }
 
             if (!ArrayUtils.contains(AVAILABLE_FIRST_OPTIONS, option)) {
-                System.out.print("You have input an incorrect option, try again:");
+                System.out.print("Incorrect option, try again:");
                 continue;
             }
 
