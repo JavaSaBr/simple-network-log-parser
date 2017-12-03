@@ -32,4 +32,9 @@ public class StatisticsServiceImpl implements StatisticsService {
     public void handleHostCounts(@NotNull final BiConsumer<String, Long> consumer) {
         hostCounterStatistics.handleHostCounts(consumer);
     }
+
+    @Override
+    public void clear() {
+        hostCounterStatistics.clear();
+    }
 }

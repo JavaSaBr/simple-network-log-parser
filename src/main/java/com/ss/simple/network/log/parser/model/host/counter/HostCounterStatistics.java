@@ -22,7 +22,7 @@ public class HostCounterStatistics {
      * The map host name to host counter.
      */
     @NotNull
-    private final Map<String, HostCounter> counters;
+    private final Map<String, HostCounter> hostToCounter;
 
     /**
      * The all created host counters;
@@ -37,13 +37,13 @@ public class HostCounterStatistics {
     private final AsyncReadSyncWriteLock lock;
 
     public HostCounterStatistics() {
-        this.counters = new HashMap<>();
+        this.hostToCounter = new HashMap<>();
         this.hostCounters = ArrayFactory.newArray(HostCounter.class);
         this.lock = LockFactory.newAtomicARSWLock();
     }
 
     private void incrementCounter(@NotNull final String host, final long count) {
-        counters.computeIfAbsent(host, this::makeHostCounter)
+        hostToCounter.computeIfAbsent(host, this::makeHostCounter)
                 .addCount(count);
     }
 
@@ -87,6 +87,19 @@ public class HostCounterStatistics {
                     cons.accept(counter.host(), counter.count()));
         } finally {
             lock.asyncUnlock();
+        }
+    }
+
+    /**
+     * Clear statistics.
+     */
+    public void clear() {
+        lock.syncLock();
+        try {
+            hostCounters.clear();
+            hostToCounter.clear();
+        } finally {
+            lock.syncUnlock();
         }
     }
 }

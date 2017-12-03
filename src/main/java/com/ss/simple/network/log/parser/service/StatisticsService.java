@@ -26,4 +26,9 @@ public interface StatisticsService extends Service {
      * @param consumer the consumer to handle statistics.
      */
     void handleHostCounts(@NotNull BiConsumer<String, Long> consumer);
+
+    /**
+     * Clear statistics.
+     */
+    void clear();
 }
