@@ -62,7 +62,9 @@ public class LogEventImpl implements MutableLogEvent {
         if (ArrayUtils.find(values, String::isEmpty) != null) {
             throw new IllegalArgumentException("The values shouldn't contain an empty element.");
         } else if (header.fieldCount() != values.length) {
-            throw new IllegalArgumentException("The count of values should be the same as count of field names in the header.");
+            throw new IllegalArgumentException("The count of values(" + values.length + ") should be the same as count of " +
+                    "field names(" + header.fieldCount() + ") in the header.\n" +
+                    "Values: " + ArrayUtils.toString(values));
         }
 
         this.values = values;
