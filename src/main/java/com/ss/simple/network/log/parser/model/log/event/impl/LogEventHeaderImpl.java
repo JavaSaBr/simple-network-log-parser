@@ -5,29 +5,34 @@ import com.ss.simple.network.log.parser.model.log.event.LogEventHeader;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * The base implementation of {@link LogEventHeader}.
+ *
  * @author JavaSaBr
  */
 public class LogEventHeaderImpl implements LogEventHeader {
 
+    /**
+     * The field names.
+     */
     @NotNull
-    private final String[] fields;
+    private final String[] fieldNames;
 
-    public LogEventHeaderImpl(@NotNull final String[] fields) {
-        this.fields = fields;
+    public LogEventHeaderImpl(@NotNull final String[] fieldNames) {
+        this.fieldNames = fieldNames;
     }
 
     @Override
-    public @NotNull String field(final int index) {
-        return fields[index];
+    public @NotNull String fieldName(final int index) {
+        return fieldNames[index];
     }
 
     @Override
-    public int fieldIndexOf(@NotNull final String fieldName) {
-        return ArrayUtils.indexOf(fields, fieldName);
+    public int fieldNameIndexOf(@NotNull final String fieldName) {
+        return ArrayUtils.indexOf(fieldNames, fieldName);
     }
 
     @Override
     public int fieldCount() {
-        return fields.length;
+        return fieldNames.length;
     }
 }

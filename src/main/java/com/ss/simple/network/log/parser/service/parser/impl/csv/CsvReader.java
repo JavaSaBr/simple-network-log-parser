@@ -6,6 +6,8 @@ import com.ss.rlib.util.array.UnsafeArray;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * The csv reader.
+ *
  * @author JavaSaBr
  */
 public class CsvReader {
@@ -26,6 +28,14 @@ public class CsvReader {
         return INSTANCE;
     }
 
+    /**
+     * Extract values from the csv row.
+     *
+     * @param csvRow the csv row.
+     * @param splitter the splitter symbol.
+     * @param wrapper the wrapper symbol.
+     * @return the array of extracted values. If you need to store the array, you should copy it.
+     */
     public String[] extractValues(@NotNull final String csvRow, final char splitter, final char wrapper) {
 
         final StringBuilder builder = clear(LOCAL_BUILDER.get());

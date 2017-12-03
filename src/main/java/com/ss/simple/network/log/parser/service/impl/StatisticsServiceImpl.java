@@ -1,7 +1,7 @@
 package com.ss.simple.network.log.parser.service.impl;
 
 import com.ss.rlib.util.ref.Reference;
-import com.ss.simple.network.log.parser.model.HostCounterStatistics;
+import com.ss.simple.network.log.parser.model.host.counter.HostCounterStatistics;
 import com.ss.simple.network.log.parser.service.StatisticsService;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,6 +13,9 @@ import java.util.function.BiConsumer;
  */
 public class StatisticsServiceImpl implements StatisticsService {
 
+    /**
+     * The host counters container.
+     */
     @NotNull
     private final HostCounterStatistics hostCounterStatistics;
 

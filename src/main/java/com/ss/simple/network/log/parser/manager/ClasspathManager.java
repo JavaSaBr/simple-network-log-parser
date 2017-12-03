@@ -7,6 +7,8 @@ import com.ss.rlib.util.array.ArrayFactory;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * The manager to work with available classes in the classpath.
+ *
  * @author JavaSaBr
  */
 public class ClasspathManager {
@@ -18,6 +20,9 @@ public class ClasspathManager {
         return INSTANCE;
     }
 
+    /**
+     * The classpath scanner.
+     */
     @NotNull
     private final ClassPathScanner scanner;
 
@@ -27,6 +32,12 @@ public class ClasspathManager {
         this.scanner.scan(path -> !path.contains("jre"));
     }
 
+    /**
+     * Find available implementation og the interface in this classpath.
+     *
+     * @param type the type of an interface.
+     * @return the list of available implementations.
+     */
     public <T> @NotNull Array<Class<T>> findImplementations(@NotNull final Class<T> type) {
         final Array<Class<T>> result = ArrayFactory.newArray(Class.class);
         scanner.findImplements(result, type);

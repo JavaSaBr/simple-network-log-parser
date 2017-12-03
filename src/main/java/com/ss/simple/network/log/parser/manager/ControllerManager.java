@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
+ * The manager to manage all controllers.
+ *
  * @author JavaSaBr
  */
 public class ControllerManager {
@@ -19,6 +21,9 @@ public class ControllerManager {
         return INSTANCE;
     }
 
+    /**
+     * The list of created controllers.
+     */
     @NotNull
     private final List<Controller> controllers;
 
@@ -30,10 +35,16 @@ public class ControllerManager {
                 .collect(toList());
     }
 
+    /**
+     * Start all controllers.
+     */
     public void startControllers() {
         controllers.forEach(Controller::start);
     }
 
+    /**
+     * Stop all controllers.
+     */
     public void stopControllers() {
         controllers.forEach(Controller::start);
     }

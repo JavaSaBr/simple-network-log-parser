@@ -20,12 +20,14 @@ import java.util.function.BiConsumer;
  */
 public class CsvParser implements Parser {
 
+    @NotNull
     private static final CsvReader CSV_READER = CsvReader.getInstance();
 
     @Override
     public void parse(@NotNull final InputStream in,
                       @NotNull final BiConsumer<@NotNull LogEventHeader, @NotNull ReusableLogEvent> consumer) {
 
+        // we use one instance to present all rows
         final MutableLogEvent event = new LogEventImpl();
 
         LogEventHeader header = null;
@@ -35,6 +37,7 @@ public class CsvParser implements Parser {
 
                 final String nextLine = scanner.nextLine();
 
+                // at first, we should find a row with list of fields.
                 if (header == null) {
                     if (!nextLine.startsWith("#Fields:")) {
                         continue;
@@ -48,12 +51,14 @@ public class CsvParser implements Parser {
                     continue;
                 }
 
+                // it seems it's just a description row, we can skip it.
                 if (nextLine.startsWith("#")) {
                     continue;
                 }
 
                 final String[] values = CSV_READER.extractValues(nextLine, ' ', '"');
 
+                // reuse the event instance
                 event.setValues(ArrayUtils.copyOf(values, 0));
 
                 consumer.accept(header, event);

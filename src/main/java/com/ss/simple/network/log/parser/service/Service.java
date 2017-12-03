@@ -8,6 +8,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Service {
 
-    default void init(@NotNull ServiceManager manager) {
+    /**
+     * Initialize this service.
+     *
+     * @param serviceManager the service manager.
+     */
+    default void init(@NotNull final ServiceManager serviceManager) {
     }
 }

@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
+ * The base implementation of the {@link ParserService}.
+ *
  * @author JavaSaBr
  */
 public class ParserServiceImpl implements ParserService {
@@ -31,12 +33,21 @@ public class ParserServiceImpl implements ParserService {
     @NotNull
     private static final Logger LOGGER = LoggerManager.getLogger(ParserServiceImpl.class);
 
+    /**
+     * The list of available parsers.
+     */
     @NotNull
     private final List<Parser> parsers;
 
+    /**
+     * The map format to parser.
+     */
     @NotNull
     private final Map<String, Parser> formatToParser;
 
+    /**
+     * The statistics service.
+     */
     @Nullable
     private StatisticsService statisticsService;
 
@@ -51,8 +62,8 @@ public class ParserServiceImpl implements ParserService {
     }
 
     @Override
-    public void init(@NotNull final ServiceManager manager) {
-        this.statisticsService = manager.getService(StatisticsService.class);
+    public void init(@NotNull final ServiceManager serviceManager) {
+        this.statisticsService = serviceManager.getService(StatisticsService.class);
     }
 
     private @NotNull StatisticsService getStatisticsService() {
@@ -81,7 +92,7 @@ public class ParserServiceImpl implements ParserService {
             LOGGER.debug(event, Object::toString);
 
             if (ref.getInt() == -1) {
-                ref.setInt(header.fieldIndexOf("cs-host"));
+                ref.setInt(header.fieldNameIndexOf("cs-host"));
             }
 
             final String value = event.value(ref.getInt());

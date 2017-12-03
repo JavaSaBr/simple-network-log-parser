@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 /**
+ * The manager to manage all services.
+ *
  * @author JavaSaBr
  */
 public class ServiceManager {
@@ -19,6 +21,9 @@ public class ServiceManager {
         return INSTANCE;
     }
 
+    /**
+     * The list of created services.
+     */
     @NotNull
     private final List<Service> services;
 
@@ -31,6 +36,13 @@ public class ServiceManager {
         this.services.forEach(service -> service.init(this));
     }
 
+    /**
+     * Get the service of the type.
+     *
+     * @param type the type of the service.
+     * @return the implementation of the service.
+     * @throws RuntimeException if we can't find any implementation of the service.
+     */
     public <T extends Service> @NotNull T getService(@NotNull final Class<T> type) {
         return services.stream().filter(type::isInstance)
                 .map(type::cast)

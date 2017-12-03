@@ -8,13 +8,21 @@ import com.ss.simple.network.log.parser.model.log.event.MutableLogEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * The base implementation of {@link LogEvent}.
+ *
  * @author JavaSaBr
  */
 public class LogEventImpl implements MutableLogEvent {
 
+    /**
+     * The header.
+     */
     @NotNull
     private LogEventHeader header;
 
+    /**
+     * The values.
+     */
     @NotNull
     private String[] values;
 
@@ -28,10 +36,6 @@ public class LogEventImpl implements MutableLogEvent {
         this.values = values;
     }
 
-    private @NotNull String[] values() {
-        return values;
-    }
-
     @Override
     public @NotNull LogEventHeader header() {
         return header;
@@ -39,7 +43,7 @@ public class LogEventImpl implements MutableLogEvent {
 
     @Override
     public @NotNull LogEvent copy() {
-        return new LogEventImpl(header(), values());
+        return new LogEventImpl(header, values);
     }
 
     @Override
@@ -57,6 +61,8 @@ public class LogEventImpl implements MutableLogEvent {
 
         if (ArrayUtils.find(values, String::isEmpty) != null) {
             throw new IllegalArgumentException("The values shouldn't contain an empty element.");
+        } else if (header.fieldCount() != values.length) {
+            throw new IllegalArgumentException("The count of values should be the same as count of field names in the header.");
         }
 
         this.values = values;
@@ -70,9 +76,9 @@ public class LogEventImpl implements MutableLogEvent {
         for (int i = 0; i < values.length; i++) {
 
             final String value = values[i];
-            final String field = header.field(i);
+            final String fieldName = header.fieldName(i);
 
-            builder.append('\t').append(field)
+            builder.append('\t').append(fieldName)
                     .append(':').append(value)
                     .append('\n');
         }

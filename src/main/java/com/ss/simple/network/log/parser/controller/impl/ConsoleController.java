@@ -24,6 +24,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 /**
+ * The controller to provide console API to work with this parser.
+ *
  * @author JavaSaBr
  */
 public class ConsoleController implements Controller {
@@ -32,20 +34,35 @@ public class ConsoleController implements Controller {
     private static final Logger LOGGER = LoggerManager.getLogger(ConsoleController.class);
 
     @NotNull
-    private static final int[] AVAILABLE_FIRST_OPTIONS = ArrayFactory.toIntegerArray(1, 2);
+    private static final int[] AVAILABLE_OPTIONS = ArrayFactory.toIntegerArray(1, 2);
 
+    /**
+     * The parser service.
+     */
     @NotNull
     private final ParserService parserService;
 
+    /**
+     * The statistics service.
+     */
     @NotNull
     private final StatisticsService statisticsService;
 
+    /**
+     * The working thread.
+     */
     @NotNull
     private final Thread thread;
 
+    /**
+     * The available formats to parse.
+     */
     @NotNull
     private final Set<String> availableFormats;
 
+    /**
+     * The printed version of available formats.
+     */
     @NotNull
     private final String formatsString;
 
@@ -60,6 +77,9 @@ public class ConsoleController implements Controller {
                 .collect(joining(","));
     }
 
+    /**
+     * The loop of console interface.
+     */
     private void runInThread() {
         LOGGER.info("Started.");
 
@@ -98,6 +118,12 @@ public class ConsoleController implements Controller {
         }
     }
 
+    /**
+     * Read a format of parsed file.
+     *
+     * @param scanner the scanner.
+     * @return the valid format.
+     */
     private @NotNull String readFormat(@NotNull final Scanner scanner) {
         do {
 
@@ -116,6 +142,12 @@ public class ConsoleController implements Controller {
         } while (true);
     }
 
+    /**
+     * Read a file to parse.
+     *
+     * @param scanner the scanner.
+     * @return the valid file.
+     */
     private @NotNull Path readFile(@NotNull final Scanner scanner) {
         Path file;
         do {
@@ -142,6 +174,12 @@ public class ConsoleController implements Controller {
         } while (true);
     }
 
+    /**
+     * Read an option.
+     *
+     * @param scanner the scanner.
+     * @return the valid option.
+     */
     private int readOption(@NotNull final Scanner scanner) {
         int option;
         do {
@@ -156,7 +194,7 @@ public class ConsoleController implements Controller {
                 continue;
             }
 
-            if (!ArrayUtils.contains(AVAILABLE_FIRST_OPTIONS, option)) {
+            if (!ArrayUtils.contains(AVAILABLE_OPTIONS, option)) {
                 System.out.print("Incorrect option, try again:");
                 continue;
             }
@@ -166,6 +204,13 @@ public class ConsoleController implements Controller {
         } while (true);
     }
 
+    /**
+     * Read next lines until when the condition will be completed.
+     *
+     * @param scanner   the scanner.
+     * @param condition the condition.
+     * @return the requested line.
+     */
     private static @NotNull String nextLineUntil(@NotNull final Scanner scanner,
                                                  @NotNull final Predicate<@NotNull String> condition) {
         while (scanner.hasNextLine()) {
