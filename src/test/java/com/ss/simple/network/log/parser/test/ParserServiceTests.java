@@ -62,7 +62,12 @@ public class ParserServiceTests {
 
         try (final InputStream inputStream = getClass().getResourceAsStream("/logs/notvalid.log")) {
             parserService.parse(inputStream, "CSV");
+        } catch (final IllegalArgumentException e) {
+            Assertions.assertEquals(e.getMessage().contains("The count of values"), true);
+            return;
         }
+
+        throw new RuntimeException("this test was failed.");
     }
 
     @Test
@@ -73,6 +78,11 @@ public class ParserServiceTests {
 
         try (final InputStream inputStream = getClass().getResourceAsStream("/logs/oneline.log")) {
             parserService.parse(inputStream, "CSV");
+        } catch (final IllegalArgumentException e) {
+            Assertions.assertEquals(e.getMessage().contains("The log contains too long lines"), true);
+            return;
         }
+
+        throw new RuntimeException("this test was failed.");
     }
 }
